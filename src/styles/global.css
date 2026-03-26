@@ -1,0 +1,151 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════
+   B&H Flow — Design System
+   Fonte: Plus Jakarta Sans + JetBrains Mono
+   Paleta: Navy #1F3A5F · Gold #C4962A
+═══════════════════════════════════════════════════════════ */
+:root {
+  --navy:       #1F3A5F;
+  --navy-dark:  #142845;
+  --navy-mid:   #2A4F7C;
+  --blue:       #2563EB;
+  --blue-soft:  #EBF3FF;
+  --blue-light: #BFDBFE;
+  --gold:       #C4962A;
+  --gold-soft:  #FEF9EC;
+  --bg:         #F1F5FB;
+  --surface:    #FFFFFF;
+  --surface-2:  #F7FAFD;
+  --border:     #DDE6F0;
+  --border-2:   #EEF3F9;
+  --text:       #0E1C2F;
+  --text-mid:   #485E75;
+  --text-lt:    #8A9BB0;
+  --green:      #059669;
+  --red:        #DC2626;
+  --orange:     #EA580C;
+  --purple:     #7C3AED;
+  --cyan:       #0891B2;
+  --amber:      #D97706;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 16px; --r-xl: 22px;
+  --sh-sm:  0 1px 4px rgba(14,28,47,.06);
+  --sh-md:  0 4px 18px rgba(14,28,47,.10);
+  --sh-lg:  0 8px 36px rgba(14,28,47,.14);
+  --sh-xl:  0 16px 56px rgba(14,28,47,.20);
+  --t: .18s cubic-bezier(.4,0,.2,1);
+  --font: 'Plus Jakarta Sans', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a  { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+img { display: block; max-width: 100%; }
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 99px; }
+
+/* ── Animations ────────────────────────────────────────────── */
+@keyframes fadeIn  { from { opacity: 0 }                             to { opacity: 1 } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+@keyframes spin    { to   { transform: rotate(360deg) } }
+
+.fade  { animation: fadeIn  .22s ease both; }
+.slide { animation: slideUp .22s ease both; }
+
+/* ── Responsive helpers ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+  .sidebar {
+    position: fixed !important;
+    transform: translateX(-100%);
+    transition: transform .25s ease !important;
+    z-index: 200 !important;
+  }
+  .sidebar.open { transform: translateX(0) !important; }
+  .burger { display: flex !important; }
+}
+@media (min-width: 769px) { .burger { display: none !important; } }
+
+/* ── Print ──────────────────────────────────────────────────── */
+@media print {
+  .sidebar, .topbar, .no-print { display: none !important; }
+  body { background: #fff; }
+}
+
+/* ── Print / A4 ─────────────────────────────────────────────── */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 10mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  body {
+    background: #fff !important;
+    font-size: 11px !important;
+  }
+
+  .sidebar,
+  .topbar,
+  .no-print,
+  nav,
+  header {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Remove max-width restrictions */
+  .shell,
+  [style*="max-width"] {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Cards nunca cortados no meio */
+  [class*="card"],
+  [style*="borderRadius: 12"] {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Grids viram coluna única se necessário */
+  [style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  /* Recharts responsive containers */
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 160px !important;
+  }
+
+  /* Oculta botões e toolbars */
+  button {
+    display: none !important;
+  }
+}
