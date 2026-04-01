@@ -48,32 +48,17 @@ export async function updateRegistro(id, payload) {
   }
 
   try {
-    const teste = await supabase
-      .from(TABLE)
-      .select('id, nome')
-      .eq('id', id);
-
-    alert(
-      `ANTES DO UPDATE:\n${JSON.stringify(teste.data)}\nERRO: ${JSON.stringify(teste.error)}`
-    );
-
     const { data, error } = await supabase
       .from(TABLE)
       .update(payload)
       .eq('id', id)
       .select();
 
-    alert(
-      `UPDATE DATA: ${JSON.stringify(data)}\nUPDATE ERROR: ${JSON.stringify(error)}`
-    );
-
     if (error) throw error;
 
     return { data: data?.[0] ?? null, error: null };
   } catch (e) {
-    alert(`ERRO NO UPDATE: ${e.message}`);
     console.error('[BHFlow:registros] updateRegistro:', e.message);
-
     return { data: null, error: e.message };
   }
 }
