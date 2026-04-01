@@ -43,13 +43,20 @@ export async function insertRegistro(payload) {
 }
 
 export async function updateRegistro(id, payload) {
-  alert(`ID RECEBIDO: ${id}\nPAYLOAD: ${JSON.stringify(payload)}`);
-
   if (!supabase) {
     return { data: null, error: erroNaoConfigurado().message };
   }
 
   try {
+    const teste = await supabase
+      .from(TABLE)
+      .select('id, nome')
+      .eq('id', id);
+
+    alert(
+      `ANTES DO UPDATE:\n${JSON.stringify(teste.data)}\nERRO: ${JSON.stringify(teste.error)}`
+    );
+
     const { data, error } = await supabase
       .from(TABLE)
       .update(payload)
@@ -66,6 +73,7 @@ export async function updateRegistro(id, payload) {
   } catch (e) {
     alert(`ERRO NO UPDATE: ${e.message}`);
     console.error('[BHFlow:registros] updateRegistro:', e.message);
+
     return { data: null, error: e.message };
   }
 }
