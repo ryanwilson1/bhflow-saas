@@ -1,15 +1,37 @@
+import { supabase, erroNaoConfigurado } from '@/lib/supabase';
+
+const TABLE = 'registros';
+
+export async function getRegistros() {
+  if (!supabase) {
+    return { data: [], error: erroNaoConfigurado().message };
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from(TABLE)
+      .select('*')
+      .order('data_cadastro', { ascending: false });
+
+    if (error) throw error;
+
+    return { data: data ?? [], error: null };
+  } catch (e) {
+    console.error('[BHFlow:registros] getRegistros:', e.message);
+    return { data: [], error: e.message };
+  }
+}
+
 export async function insertRegistro(payload) {
-  if (!supabase) return { data: null, error: erroNaoConfigurado().message };
+  if (!supabase) {
+    return { data: null, error: erroNaoConfigurado().message };
+  }
 
   try {
     const { data, error } = await supabase
       .from(TABLE)
       .insert(payload)
-      .select()
-      
-
-    console.log('INSERT DATA:', data);
-    console.log('INSERT ERROR:', error);
+      .select();
 
     if (error) throw error;
 
@@ -21,15 +43,16 @@ export async function insertRegistro(payload) {
 }
 
 export async function updateRegistro(id, payload) {
-  if (!supabase) return { data: null, error: erroNaoConfigurado().message };
+  if (!supabase) {
+    return { data: null, error: erroNaoConfigurado().message };
+  }
 
   try {
     const { data, error } = await supabase
       .from(TABLE)
       .update(payload)
       .eq('id', id)
-      .select()
-      
+      .select();
 
     console.log('UPDATE DATA:', data);
     console.log('UPDATE ERROR:', error);
@@ -40,5 +63,25 @@ export async function updateRegistro(id, payload) {
   } catch (e) {
     console.error('[BHFlow:registros] updateRegistro:', e.message);
     return { data: null, error: e.message };
+  }
+}
+
+export async function deleteRegistro(id) {
+  if (!supabase) {
+    return { error: erroNaoConfigurado().message };
+  }
+
+  try {
+    const { error } = await supabase
+      .from(TABLE)
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+
+    return { error: null };
+  } catch (e) {
+    console.error('[BHFlow:registros] deleteRegistro:', e.message);
+    return { error: e.message };
   }
 }
