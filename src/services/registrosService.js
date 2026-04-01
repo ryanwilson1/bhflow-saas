@@ -17,7 +17,7 @@ export async function getRegistros() {
 
     return { data: data ?? [], error: null };
   } catch (e) {
-    console.error('[BHFlow:registros] getRegistros:', e.message);
+    console.error('[BHFlow:registros] getRegistros:', e);
     return { data: [], error: e.message };
   }
 }
@@ -28,17 +28,41 @@ export async function insertRegistro(payload) {
   }
 
   try {
+    const { data: authData, error: authError } =
+      await supabase.auth.getUser();
+
+    if (authError) {
+      console.error('[BHFlow] erro ao buscar usuário:', authError);
+      throw authError;
+    }
+
+    const user = authData?.user;
+
+    console.log('[BHFlow] usuário logado:', user);
+    console.log('[BHFlow] payload recebido:', payload);
+
+    if (!user) {
+      throw new Error('Usuário não autenticado');
+    }
+
     const { data, error } = await supabase
       .from(TABLE)
-      .insert(payload)
-      .select();
+      .insert([payload])
+      .select()
+      .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error('[BHFlow] erro insert:', error);
+      throw error;
+    }
 
-    return { data: data?.[0] ?? null, error: null };
+    return { data, error: null };
   } catch (e) {
-    console.error('[BHFlow:registros] insertRegistro:', e.message);
-    return { data: null, error: e.message };
+    console.error('[BHFlow:registros] insertRegistro:', e);
+    return {
+      data: null,
+      error: e?.message || 'Erro ao salvar registro',
+    };
   }
 }
 
@@ -52,13 +76,14 @@ export async function updateRegistro(id, payload) {
       .from(TABLE)
       .update(payload)
       .eq('id', id)
-      .select();
+      .select()
+      .single();
 
     if (error) throw error;
 
-    return { data: data?.[0] ?? null, error: null };
+    return { data, error: null };
   } catch (e) {
-    console.error('[BHFlow:registros] updateRegistro:', e.message);
+    console.error('[BHFlow:registros] updateRegistro:', e);
     return { data: null, error: e.message };
   }
 }
@@ -78,7 +103,7 @@ export async function deleteRegistro(id) {
 
     return { error: null };
   } catch (e) {
-    console.error('[BHFlow:registros] deleteRegistro:', e.message);
+    console.error('[BHFlow:registros] deleteRegistro:', e);
     return { error: e.message };
   }
 }
